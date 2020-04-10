@@ -75,7 +75,7 @@ for(i=0; i<N - 1; i++) {
 	}
 }
 get_walltime(&te); //stamataei i metrisi
-printf("Xronos %f\n", te-ts); //diafora xronou te-ts
+printf("Xronos = %f\n", te-ts); //diafora xronou te-ts
 
 mflops = (N* M* 2.0) / ((te - ts) * 1e6);	
 printf("MFLOPS/sec = %f\n",mflops);
