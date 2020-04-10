@@ -22,7 +22,7 @@ void print_m128_var(__m128 var) {
   printf("%f, %f, %f, %f\n", result[0], result[1], result[2], result[3]);
 }
 
-// Most optimal Horizontal Add according to https://stackoverflow.com/questions/6996764/fastest-way-to-do-horizontal-sse-vector-sum-or-other-reduction
+
 float horizontal_sum_ps(__m128 v) {
     __m128 shuf   = _mm_shuffle_ps(v, v, _MM_SHUFFLE(2, 3, 0, 1));
     __m128 sums   = _mm_add_ps(v, shuf);
@@ -37,7 +37,7 @@ int main() {
   double ts, te, mflops;
   __m128 *constants_vector;
 
-  //Memory Allocation
+ 
   i = posix_memalign((void **)&a, 16, N * M * sizeof(float));
   if (i!=0) exit(1);
   i = posix_memalign((void **)&b, 16, P * sizeof(float));
@@ -45,7 +45,7 @@ int main() {
   i = posix_memalign((void **)&c, 16, N * M * sizeof(float));
   if (i!=0) { free(a); free(b); exit(1); }
   
-  // warmup
+ 
   for (i = 0; i < N * M; i++) {
      a[i] = (float)i*3.0;
      c[i] = -1.0;
@@ -62,7 +62,7 @@ int main() {
   }
 
   get_walltime(&ts);
-  // igoring the image's frame (last row and column of the pixels array)
+
   for(i = 1; i < N - 1; i++){
     for(j = 1; j < M - 1; j++){
            
@@ -71,8 +71,6 @@ int main() {
       constants_vector = (__m128 *)b;
       
       
-      /*  __m128 Vector Variables can hold 4 aligned float so we loop three times to 
-          multiply the correct neighbors with the constants and calculate the sum.    */
       for(int z = 0; z < 3; z++) {
         switch(z) {
           case 0:
@@ -89,16 +87,15 @@ int main() {
             break;
         } 
       }
-      // Set the calculated sum to the new Pixels Array
+   
       *(c + ((i * M) + j)) = sum;
     }
   }
-  // get ending time
   get_walltime(&te);
 
   printf("Xronos = %f sec\n",(te - ts));
 
-  // compute avg array element accesses /sec (total NROWSxNCOLSx(1load+1store) element accesses)
+ 
   mflops = (N * M * 2.0) / ((te - ts) * 1e6);
   printf("Mflops/sec = %f\n", mflops);
 
